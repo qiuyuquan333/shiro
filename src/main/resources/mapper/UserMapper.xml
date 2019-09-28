@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyq.springbootshiro.mapper.UserMapper">
+    <resultMap id="useMap" type="com.qyq.springbootshiro.pojo.User">
+        <id property="uid" column="uid"></id>
+        <result property="uname" column="uname"></result>
+        <result property="upassword" column="upassword"></result>
+        <collection property="roles" ofType="com.qyq.springbootshiro.pojo.Role">
+            <id property="rid" column="rid"></id>
+            <result property="rname" column="rname"></result>
+            <collection property="premissions" ofType="com.qyq.springbootshiro.pojo.Premission">
+                <id property="pid" column="pid"></id>
+                <result property="pname" column="pname"></result>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="findUserByname" parameterType="String" resultMap="useMap">
+        SELECT u.*,r.*,p.*
+        FROM user u
+        INNER JOIN user_role ur on ur.uid = u.uid
+        INNER JOIN role r on r.rid = ur.rid
+        INNER JOIN role_premission pr on pr.rid = r.rid
+        INNER JOIN premission p on pr.pid = p.pid
+        WHERE u.uname = #{uname};
+    </select>
+
+    <select id="findByname" parameterType="String" resultType="com.qyq.springbootshiro.pojo.User">
+        SELECT * FROM user WHERE uname = #{uname};
+    </select>
+
+    <select id="findRoleById" parameterType="int" resultType="com.qyq.springbootshiro.pojo.Role">
+        SELECT * FROM role WHERE rid = #{rid};
+    </select>
+
+    <select id="findPremissionById" parameterType="int" resultType="com.qyq.springbootshiro.pojo.Premission">
+        SELECT * FROM premission WHERE pid = #{pid};
+    </select>
+
+    <insert id="insertUser" parameterType="com.qyq.springbootshiro.pojo.User" useGeneratedKeys="true" keyProperty="uid">
+        insert into user values (#{uid},#{uname},#{upassword});
+    </insert>
+
+    <insert id="insertUser_Role" parameterType="int">
+        insert into user_role values (#{uid},#{rid});
+    </insert>
+
+    <insert id="insertStudent" parameterType="com.qyq.springbootshiro.pojo.Student">
+        insert into student values (#{sid},#{sname},#{spassword});
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyq.springbootshiro.mapper.StudentMapper">
+    <resultMap id="studentMap" type="com.qyq.springbootshiro.pojo.Student">
+        <id property="sid" column="sid"></id>
+        <result property="sname" column="sname"></result>
+        <result property="spassword" column="spassword"></result>
+        <collection property="roles" ofType="com.qyq.springbootshiro.pojo.Role">
+            <id property="rid" column="rid"></id>
+            <result property="rname" column="rname"></result>
+            <collection property="premissions" ofType="com.qyq.springbootshiro.pojo.Premission">
+                <id property="pid" column="pid"></id>
+                <result property="pname" column="pname"></result>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="findStudentRPbyName" parameterType="String" resultMap="studentMap">
+        SELECT s.*,r.*,p.*
+        FROM student s
+                 INNER JOIN stu_role sr on sr.sid = s.sid
+                 INNER JOIN role r on r.rid = sr.rid
+                 INNER JOIN role_premission pr on pr.rid = r.rid
+                 INNER JOIN premission p on pr.pid = p.pid
+        WHERE s.sname = #{sname};
+    </select>
+
+    <select id="findStudentByname" parameterType="String" resultType="com.qyq.springbootshiro.pojo.Student">
+        SELECT * FROM student WHERE sname = #{sname};
+    </select>
+
+</mapper>
